@@ -146,9 +146,9 @@ Captures prises sur le cluster en fonctionnement, après l'envoi du dataset comp
 
 ## Équipe
 
-| Étudiant | Rôle principal (livrable 1) |
+| Étudiant | Contribution (livrable 1) |
 |---|---|
-| BENRBIB Aymen | à compléter |
-| AMIRACHE Zaid | Monitoring Prometheus/Grafana, vérification PySpark du pipeline L1 |
-| ZIANE Marya | à compléter |
-| KARAM Ines | à compléter |
+| BENRBIB Aymen | Cluster Docker et couche d'ingestion (Kafka → HDFS) |
+| AMIRACHE Zaid | Vérification du pipeline (PySpark) et supervision Prometheus / Grafana |
+| ZIANE Marya | Tests de résilience (reprise sur checkpoint, panne d'un DataNode) |
+| KARAM Ines | Choix techniques et fiabilité de l'ingestion (DLQ, healthcheck, runbook) |
