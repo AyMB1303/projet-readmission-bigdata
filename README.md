@@ -144,11 +144,11 @@ Captures prises sur le cluster en fonctionnement, après l'envoi du dataset comp
 └── docs/                     # architecture, documentation des données
 ```
 
-## Équipe et contributions (livrable 1)
+## Équipe
 
-| Étudiant | Contribution |
+| Étudiant | Contribution (livrable 1) |
 |---|---|
-| BENRBIB Aymen | Cluster Docker (HDFS : 1 NameNode + 2 DataNodes, réplication 2 ; Spark : 1 master + 2 workers ; Kafka KRaft + Kafka UI), producteur Kafka (`ingestion/`), archivage Kafka → HDFS en Parquet avec Spark Structured Streaming (`streaming/`), figure d'architecture, scripts de lancement et de vérification, captures d'exécution |
-| AMIRACHE Zaid | Vérification PySpark du pipeline L1 (`data/verify_output.py`, rapport [docs/verification_output_livrable1.md](docs/verification_output_livrable1.md)), supervision Prometheus + Grafana (profil `monitoring`, `infra/prometheus/`, `infra/grafana/`) |
-| ZIANE Marya | Tests de résilience : reprise du job Spark après arrêt (checkpoint) et panne d'un DataNode (`docs/tests_resilience.md`, en cours) |
-| KARAM Ines | Justification des choix techniques ([docs/choix_techniques.md](docs/choix_techniques.md)) |
+| BENRBIB Aymen | Cluster Docker et couche d'ingestion (Kafka → HDFS) |
+| AMIRACHE Zaid | Vérification du pipeline (PySpark) et supervision Prometheus / Grafana |
+| ZIANE Marya | Tests de résilience (reprise sur checkpoint, panne d'un DataNode) |
+| KARAM Ines | Choix techniques et fiabilité de l'ingestion (DLQ, healthcheck, runbook) |
