@@ -127,5 +127,5 @@ Captures prises sur le cluster en fonctionnement, après l'envoi du dataset comp
 |---|---|
 | BENRBIB Aymen | à compléter |
 | AMIRACHE Zaid | à compléter |
-| … | à compléter |
-| … | à compléter |
+| ZIANE Marya | à compléter |
+| KARAM Ines | à compléter |
