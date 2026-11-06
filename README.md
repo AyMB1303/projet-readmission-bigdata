@@ -128,4 +128,9 @@ Captures prises sur le cluster en fonctionnement, après l'envoi du dataset comp
 | BENRBIB Aymen | à compléter |
 | AMIRACHE Zaid | à compléter |
 | ZIANE Marya | à compléter |
-| KARAM Ines | à compléter |
+| KARAM Ines |  Fiabilité de l’ingestion : DLQ, healthcheck et runbook |
+## Fiabilité de l’ingestion
+
+- Les lignes invalides sont envoyées dans le topic Kafka `hospital-discharges-dlq`.
+- La commande `python .\scripts\healthcheck.py` vérifie HDFS, Kafka et Spark.
+- Le [guide de dépannage](docs/runbook.md) décrit les incidents et leurs corrections.
