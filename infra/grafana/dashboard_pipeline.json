@@ -27,8 +27,12 @@
       "fieldConfig": {
         "defaults": {
           "unit": "msgps",
-          "custom": { "lineWidth": 2 }
+          "noValue": "0",
+          "custom": { "lineWidth": 2, "spanNulls": true }
         }
+      },
+      "options": {
+        "tooltip": { "mode": "multi" }
       }
     },
     {
@@ -39,7 +43,7 @@
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
-          "expr": "kafka_consumergroup_lag{topic=\"hospital-discharges\"}",
+          "expr": "kafka_consumergroup_lag{topic=\"hospital-discharges\"} or vector(0)",
           "legendFormat": "partition {{partition}}",
           "refId": "A"
         }
@@ -47,7 +51,8 @@
       "fieldConfig": {
         "defaults": {
           "unit": "short",
-          "custom": { "lineWidth": 2 },
+          "noValue": "0",
+          "custom": { "lineWidth": 2, "spanNulls": true },
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -57,26 +62,47 @@
             ]
           }
         }
+      },
+      "options": {
+        "tooltip": { "mode": "multi" }
       }
     },
     {
       "id": 3,
-      "title": "Taille des topics Kafka (octets)",
+      "title": "Taille des topics Kafka (offsets)",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
           "expr": "sum(kafka_topic_partition_current_offset{topic=\"hospital-discharges\"}) by (topic)",
-          "legendFormat": "{{topic}} — offset total",
+          "legendFormat": "hospital-discharges",
           "refId": "A"
+        },
+        {
+          "expr": "sum(kafka_topic_partition_current_offset{topic=\"hospital-discharges-dlq\"}) by (topic)",
+          "legendFormat": "hospital-discharges-dlq",
+          "refId": "B"
         }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "short",
-          "custom": { "lineWidth": 2 }
-        }
+          "noValue": "0",
+          "custom": { "lineWidth": 2, "spanNulls": true }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "hospital-discharges-dlq" },
+            "properties": [
+              { "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": { "mode": "multi" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
       }
     },
     {
@@ -95,11 +121,97 @@
       "fieldConfig": {
         "defaults": {
           "unit": "short",
+          "noValue": "Inconnu",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "Hors ligne", "color": "red", "index": 0 },
+                "1": { "text": "Actif", "color": "green", "index": 1 }
+              }
+            },
+            {
+              "type": "special",
+              "options": {
+                "match": "null",
+                "result": { "text": "Inconnu", "color": "orange", "index": 2 }
+              }
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               { "color": "red", "value": null },
               { "color": "green", "value": 1 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "DLQ — messages rejetés / seconde",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(kafka_topic_partition_current_offset{topic=\"hospital-discharges-dlq\"}[1m])",
+          "legendFormat": "rejetés / s",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "msgps",
+          "noValue": "0",
+          "custom": { "lineWidth": 2, "spanNulls": true },
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 0.01 },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        }
+      },
+      "options": {
+        "tooltip": { "mode": "single" }
+      }
+    },
+    {
+      "id": 6,
+      "title": "DLQ — total messages rejetés",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum(kafka_topic_partition_current_offset{topic=\"hospital-discharges-dlq\"}) or vector(0)",
+          "legendFormat": "Total rejetés",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "0",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "Aucun rejet", "color": "green", "index": 0 }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1 },
+              { "color": "red", "value": 100 }
             ]
           }
         }

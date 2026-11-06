@@ -105,12 +105,14 @@ Le tableau de bord **Pipeline Big Data — Readmission** s'ouvre via Dashboards 
 
 | Panneau | Métrique |
 |---|---|
-| Messages ingérés / seconde | Débit par partition Kafka (rate d'offset) |
-| Taille des topics Kafka | Offset cumulé du topic `hospital-discharges` |
-| Brokers actifs | Nombre de brokers Kafka vivants |
-| Consumer lag par partition | Retard des consommateurs (si consumer group actif) |
+| Messages ingérés / seconde | Débit par partition Kafka (rate d'offset sur `hospital-discharges`) |
+| Consumer lag par partition | Retard des consommateurs Spark — vert near-zero en fonctionnement normal |
+| Taille des topics Kafka | Offsets cumulés de `hospital-discharges` et `hospital-discharges-dlq` côte à côte |
+| Brokers actifs | État du broker Kafka — affiche **Actif** / **Hors ligne** |
+| DLQ — messages rejetés / seconde | Débit de rejets du producer vers la Dead Letter Queue |
+| DLQ — total messages rejetés | Compteur cumulé — affiche **Aucun rejet** tant que le pipeline est sain |
 
-![Grafana dashboard](docs/captures/09_grafana_dashboard.png)
+![Grafana dashboard live](docs/captures/10_grafana_dashboard_live.png)
 
 ## Preuves d'exécution (livrable 1)
 
@@ -149,6 +151,6 @@ Captures prises sur le cluster en fonctionnement, après l'envoi du dataset comp
 | Étudiant | Contribution (livrable 1) |
 |---|---|
 | BENRBIB Aymen | Cluster Docker et couche d'ingestion (Kafka → HDFS) |
-| AMIRACHE Zaid | Vérification du pipeline (PySpark) et supervision Prometheus / Grafana |
-| ZIANE Marya | Tests de résilience (reprise sur checkpoint, panne d'un DataNode) |
-| KARAM Ines | Choix techniques et fiabilité de l'ingestion (DLQ, healthcheck, runbook) |
+| AMIRACHE Zaid | Vérification du pipeline PySpark (L1), supervision Prometheus / Grafana, monitoring DLQ |
+| ZIANE Marya | Tests de résilience (reprise sur checkpoint Spark, panne d'un DataNode) |
+| KARAM Ines | Choix techniques, fiabilité de l'ingestion (DLQ, healthcheck, runbook) |
