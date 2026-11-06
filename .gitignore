@@ -1,0 +1,21 @@
+# Données (téléchargées par scripts/download_dataset)
+data/*
+!data/README.md
+# Secrets
+.env
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+# Spark / Hadoop locaux
+spark-warehouse/
+metastore_db/
+derby.log
+*.crc
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+docs/captures/raw/
