@@ -30,6 +30,9 @@ Projet **Big Data Plateformes / Big Data Analytics** — ESI Rabat, 3A ISITD, 20
 | `kafka-ui` | `provectuslabs/kafka-ui:v0.7.2` | Interface d'observation des topics et messages | http://localhost:8090 |
 | `producer` | `python:3.11.11-slim` + `confluent-kafka 2.6.1` | Rejoue le CSV dans Kafka (profil `ingestion`) | — |
 | `postgres` | `postgres:16.6-alpine` | Base de restitution (profil `restitution`, livrable 4) | :5432 |
+| `kafka-exporter` | `danielqsj/kafka-exporter:latest` | Exporte les métriques Kafka vers Prometheus (profil `monitoring`) | :9308 |
+| `prometheus` | `prom/prometheus:v2.52.0` | Collecte et stocke les métriques (profil `monitoring`) | http://localhost:9090 |
+| `grafana` | `grafana/grafana:10.4.3` | Tableau de bord de supervision (profil `monitoring`) | http://localhost:3000 |
 
 ## Prérequis
 
@@ -89,6 +92,26 @@ powershell -ExecutionPolicy Bypass -File scripts\verify_livrable1.ps1
 
 La cible `readmitted` voyage dans l'événement **uniquement** pour l'entraînement et l'évaluation : elle n'est connue que 30 jours après la sortie et **n'est jamais utilisée comme variable explicative** (voir [docs/donnees.md](docs/donnees.md)).
 
+## Supervision (monitoring)
+
+Le profil `monitoring` démarre une stack Prometheus + Grafana + kafka-exporter :
+
+```bash
+docker compose --profile monitoring up -d
+```
+
+Grafana est accessible sur **http://localhost:3000** (identifiants : `admin` / `admin`).  
+Le tableau de bord **Pipeline Big Data — Readmission** s'ouvre via Dashboards → Browse.
+
+| Panneau | Métrique |
+|---|---|
+| Messages ingérés / seconde | Débit par partition Kafka (rate d'offset) |
+| Taille des topics Kafka | Offset cumulé du topic `hospital-discharges` |
+| Brokers actifs | Nombre de brokers Kafka vivants |
+| Consumer lag par partition | Retard des consommateurs (si consumer group actif) |
+
+![Grafana dashboard](docs/captures/09_grafana_dashboard.png)
+
 ## Preuves d'exécution (livrable 1)
 
 Captures prises sur le cluster en fonctionnement, après l'envoi du dataset complet (101 766 événements). Le détail des vérifications en ligne de commande est dans [docs/verification_livrable1.txt](docs/verification_livrable1.txt).
@@ -121,16 +144,11 @@ Captures prises sur le cluster en fonctionnement, après l'envoi du dataset comp
 └── docs/                     # architecture, documentation des données
 ```
 
-## Équipe
+## Équipe et contributions (livrable 1)
 
-| Étudiant | Rôle principal (livrable 1) |
+| Étudiant | Contribution |
 |---|---|
-| BENRBIB Aymen | à compléter |
-| AMIRACHE Zaid | à compléter |
-| ZIANE Marya | à compléter |
-| KARAM Ines |  Fiabilité de l’ingestion : DLQ, healthcheck et runbook |
-## Fiabilité de l’ingestion
-
-- Les lignes invalides sont envoyées dans le topic Kafka `hospital-discharges-dlq`.
-- La commande `python .\scripts\healthcheck.py` vérifie HDFS, Kafka et Spark.
-- Le [guide de dépannage](docs/runbook.md) décrit les incidents et leurs corrections.
+| BENRBIB Aymen | Cluster Docker (HDFS : 1 NameNode + 2 DataNodes, réplication 2 ; Spark : 1 master + 2 workers ; Kafka KRaft + Kafka UI), producteur Kafka (`ingestion/`), archivage Kafka → HDFS en Parquet avec Spark Structured Streaming (`streaming/`), figure d'architecture, scripts de lancement et de vérification, captures d'exécution |
+| AMIRACHE Zaid | Vérification PySpark du pipeline L1 (`data/verify_output.py`, rapport [docs/verification_output_livrable1.md](docs/verification_output_livrable1.md)), supervision Prometheus + Grafana (profil `monitoring`, `infra/prometheus/`, `infra/grafana/`) |
+| ZIANE Marya | Tests de résilience : reprise du job Spark après arrêt (checkpoint) et panne d'un DataNode (`docs/tests_resilience.md`, en cours) |
+| KARAM Ines || KARAM Ines | Justification des choix techniques ([docs/choix_techniques.md](docs/choix_techniques.md)) ; fiabilité de l’ingestion : DLQ, healthcheck et runbook ||
