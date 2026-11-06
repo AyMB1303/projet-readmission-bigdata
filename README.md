@@ -89,6 +89,21 @@ powershell -ExecutionPolicy Bypass -File scripts\verify_livrable1.ps1
 
 La cible `readmitted` voyage dans l'événement **uniquement** pour l'entraînement et l'évaluation : elle n'est connue que 30 jours après la sortie et **n'est jamais utilisée comme variable explicative** (voir [docs/donnees.md](docs/donnees.md)).
 
+## Preuves d'exécution (livrable 1)
+
+Captures prises sur le cluster en fonctionnement, après l'envoi du dataset complet (101 766 événements). Le détail des vérifications en ligne de commande est dans [docs/verification_livrable1.txt](docs/verification_livrable1.txt).
+
+| | Ce que montre la capture |
+|---|---|
+| ![](docs/captures/01_hdfs_overview.png) | **HDFS – NameNode** (localhost:9870) : cluster actif, 2 DataNodes vivants. |
+| ![](docs/captures/02_hdfs_datanodes.png) | **HDFS – DataNodes** : `datanode1` et `datanode2` *In Service*. |
+| ![](docs/captures/03_hdfs_archive_parquet.png) | **HDFS – archive brute** : fichiers Parquet dans `/data/raw/hospital_discharges/ingest_date=…`, réplication 2. |
+| ![](docs/captures/04_spark_master_workers.png) | **Spark master** (localhost:8080) : 2 workers ALIVE, application `archive-kafka-to-hdfs` RUNNING. |
+| ![](docs/captures/05_spark_streaming_query.png) | **Structured Streaming** (localhost:4040) : requête `archive_raw` active. |
+| ![](docs/captures/06_spark_streaming_stats.png) | **Statistiques de la requête** : débit d'entrée et durée des micro-batchs. |
+| ![](docs/captures/07_kafka_topic.png) | **Kafka UI** (localhost:8090) : topic `hospital-discharges`, 3 partitions, 101 766 messages. |
+| ![](docs/captures/08_kafka_messages.png) | **Kafka UI – messages** : événements JSON, clé `patient_nbr`. |
+
 ## Organisation du dépôt
 
 ```
