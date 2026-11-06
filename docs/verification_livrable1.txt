@@ -1,0 +1,81 @@
+Verification livrable 1 - 2026-11-06 01:59
+
+===== 1. Conteneurs =====
+NAME             IMAGE                           STATUS
+datanode1        apache/hadoop:3.4.2             Up 3 hours
+datanode2        apache/hadoop:3.4.2             Up 3 hours
+kafka            apache/kafka:4.2.2              Up 3 hours (healthy)
+kafka-ui         provectuslabs/kafka-ui:v0.7.2   Up 3 hours
+namenode         apache/hadoop:3.4.2             Up 3 hours (healthy)
+spark-master     readmission/spark:4.1.3         Up 21 minutes (healthy)
+spark-worker-1   readmission/spark:4.1.3         Up 21 minutes
+spark-worker-2   readmission/spark:4.1.3         Up 21 minutes
+
+===== 2. HDFS : DataNodes vivants et replication =====
+Live datanodes (2):
+Name: 172.23.0.5:9866 (datanode2.readmission-net)
+Hostname: datanode2
+DFS Remaining%: 88.74%
+Name: 172.23.0.6:9866 (datanode1.readmission-net)
+Hostname: datanode1
+DFS Remaining%: 88.74%
+2
+
+===== 3. Spark : workers enregistres aupres du master =====
+status: ALIVE | workers vivants: 2 | cores: 4 | memoire: 3072 MB
+ - 172.23.0.9 : ALIVE, 2 cores, 1536 MB
+ - 172.23.0.7 : ALIVE, 2 cores, 1536 MB
+applications actives: archive-kafka-to-hdfs
+
+===== 4. Kafka : topics =====
+Topic: hospital-discharges	TopicId: KVqTczZlTNW9-pagAyhjqg	PartitionCount: 3	ReplicationFactor: 1	Configs: min.insync.replicas=1,retention.ms=604800000
+	Topic: hospital-discharges	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: hospital-discharges	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: hospital-discharges	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+
+===== 5. Kafka : offsets (nombre de messages par partition) =====
+hospital-discharges:0:34164
+hospital-discharges:1:33953
+hospital-discharges:2:33649
+
+===== 6. Kafka : 2 messages lus depuis le debut =====
+Option --property is deprecated and will be removed in a future version. Use --formatter-property instead.
+8222157	{"event_id": "2278392", "event_type": "hospital_discharge", "event_time": "2026-11-06T01:38:14.024+00:00", "seq": 0, "source": "replay:diabetic_data.csv", "encounter_id": 2278392, "patient_nbr": 8222157, "race": "Caucasian", "gender": "Female", "age": "[0-10)", "weight": null, "admission_type_id": 6, "discharge_disposition_id": 25, "admission_source_id": 1, "time_in_hospital": 1, "payer_code": null, "medical_specialty": "Pediatrics-Endocrinology", "num_lab_procedures": 41, "num_procedures": 0, "num_medications": 1, "number_outpatient": 0, "number_emergency": 0, "number_inpatient": 0, "diag_1": "250.83", "diag_2": null, "diag_3": null, "number_diagnoses": 1, "max_glu_serum": "None", "A1Cresult": "None", "metformin": "No", "repaglinide": "No", "nateglinide": "No", "chlorpropamide": "No", "glimepiride": "No", "acetohexamide": "No", "glipizide": "No", "glyburide": "No", "tolbutamide": "No", "pioglitazone": "No", "rosiglitazone": "No", "acarbose": "No", "miglitol": "No", "troglitazone": "No", "tolazamide": "No", "examide": "No", "citoglipton": "No", "insulin": "No", "glyburide-metformin": "No", "glipizide-metformin": "No", "glimepiride-pioglitazone": "No", "metformin-rosiglitazone": "No", "metformin-pioglitazone": "No", "change": "No", "diabetesMed": "No", "readmitted": "NO"}
+55629189	{"event_id": "149190", "event_type": "hospital_discharge", "event_time": "2026-11-06T01:38:14.031+00:00", "seq": 1, "source": "replay:diabetic_data.csv", "encounter_id": 149190, "patient_nbr": 55629189, "race": "Caucasian", "gender": "Female", "age": "[10-20)", "weight": null, "admission_type_id": 1, "discharge_disposition_id": 1, "admission_source_id": 7, "time_in_hospital": 3, "payer_code": null, "medical_specialty": null, "num_lab_procedures": 59, "num_procedures": 0, "num_medications": 18, "number_outpatient": 0, "number_emergency": 0, "number_inpatient": 0, "diag_1": "276", "diag_2": "250.01", "diag_3": "255", "number_diagnoses": 9, "max_glu_serum": "None", "A1Cresult": "None", "metformin": "No", "repaglinide": "No", "nateglinide": "No", "chlorpropamide": "No", "glimepiride": "No", "acetohexamide": "No", "glipizide": "No", "glyburide": "No", "tolbutamide": "No", "pioglitazone": "No", "rosiglitazone": "No", "acarbose": "No", "miglitol": "No", "troglitazone": "No", "tolazamide": "No", "examide": "No", "citoglipton": "No", "insulin": "Up", "glyburide-metformin": "No", "glipizide-metformin": "No", "glimepiride-pioglitazone": "No", "metformin-rosiglitazone": "No", "metformin-pioglitazone": "No", "change": "Ch", "diabetesMed": "Yes", "readmitted": ">30"}
+Processed a total of 2 messages
+
+===== 7. HDFS : archive Parquet ecrite par Spark =====
+drwxr-xr-x   - spark supergroup          0 2026-11-06 01:57 /data/raw/hospital_discharges/_spark_metadata
+-rw-r--r--   2 spark supergroup        818 2026-11-06 01:57 /data/raw/hospital_discharges/_spark_metadata/0
+drwxr-xr-x   - spark supergroup          0 2026-11-06 01:57 /data/raw/hospital_discharges/ingest_date=2026-11-06
+-rw-r--r--   2 spark supergroup    1840853 2026-11-06 01:57 /data/raw/hospital_discharges/ingest_date=2026-11-06/part-00000-5e786108-ec95-4450-8a76-6cdf7e995582.c000.snappy.parquet
+-rw-r--r--   2 spark supergroup    1832836 2026-11-06 01:57 /data/raw/hospital_discharges/ingest_date=2026-11-06/part-00001-09395e81-b11b-49f6-8983-ec90fda42b27.c000.snappy.parquet
+-rw-r--r--   2 spark supergroup    1815221 2026-11-06 01:57 /data/raw/hospital_discharges/ingest_date=2026-11-06/part-00002-82ccdf6b-5e37-40ab-a815-48407292bca9.c000.snappy.parquet
+Nombre de fichiers Parquet : 3
+5.2 M  10.5 M  /data/raw/hospital_discharges
+
+===== 8. HDFS : replication effective des fichiers (fsck) =====
+Connecting to namenode via http://namenode:9870/fsck?ugi=root&files=1&blocks=1&path=%2Fdata%2Fraw
+0. BP-1173571574-172.23.0.4-1793919094436:blk_1073741831_1007 len=818 Live_repl=2
+0. BP-1173571574-172.23.0.4-1793919094436:blk_1073741828_1004 len=1840853 Live_repl=2
+0. BP-1173571574-172.23.0.4-1793919094436:blk_1073741829_1005 len=1832836 Live_repl=2
+0. BP-1173571574-172.23.0.4-1793919094436:blk_1073741830_1006 len=1815221 Live_repl=2
+Status: HEALTHY
+ Average block replication:	2.0
+
+===== 9. Journal du job d'archivage (fin) =====
+26/11/06 01:56:56 INFO StandaloneSchedulerBackend: Granted executor ID app-20261106015655-0000/0 on hostPort 172.23.0.9:35723 with 1 core(s), 1024.0 MiB RAM
+26/11/06 01:56:56 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20261106015655-0000/1 on worker-20261106013717-172.23.0.7-45495 (172.23.0.7:45495) with 1 core(s)
+26/11/06 01:56:56 INFO StandaloneSchedulerBackend: Granted executor ID app-20261106015655-0000/1 on hostPort 172.23.0.7:45495 with 1 core(s), 1024.0 MiB RAM
+26/11/06 01:56:56 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+26/11/06 01:56:56 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20261106015655-0000/1 is now RUNNING
+26/11/06 01:56:56 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20261106015655-0000/0 is now RUNNING
+26/11/06 01:57:05 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+Archivage démarré : hospital-discharges -> hdfs://namenode:8020/data/raw/hospital_discharges
+26/11/06 01:57:13 WARN SparkStringUtils: Truncated the string representation of a plan since it was too large. This behavior can be adjusted by setting 'spark.sql.debug.maxToStringFields'.
+[batch 0] 101766 événements archivés (5472.2 lignes/s)
+[batch 1] 0 événements archivés (0.0 lignes/s)
+[batch 1] 0 événements archivés (0.0 lignes/s)
+[batch 1] 0 événements archivés (0.0 lignes/s)
+[batch 1] 0 événements archivés (0.0 lignes/s)
+[batch 1] 0 événements archivés (0.0 lignes/s)
